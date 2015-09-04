@@ -6,7 +6,7 @@ Extended version of json-simple providing the following additional features:
 * NSKeyValueObserving style value observation
 
 Includes code taken from the following projects:
-* fangyidong/json-simple[https://github.com/fangyidong/json-simple]
-* wocommunity/wonder[https://github.com/wocommunity/wonder]
+* [fangyidong/json-simple](https://github.com/fangyidong/json-simple)
+* [wocommunity/wonder](https://github.com/wocommunity/wonder)
 
 
