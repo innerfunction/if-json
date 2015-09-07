@@ -11,9 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.ContentHandler;
-import org.json.simple.parser.ParseException;
+import android.annotation.SuppressLint;
 
 import com.innerfunction.json.JSONArray;
 import com.innerfunction.json.JSONObject;
@@ -34,12 +32,14 @@ public class JSONParser {
 	public static final int S_END=6;
 	public static final int S_IN_ERROR=-1;
 	
+    @SuppressWarnings("rawtypes")
     private LinkedList handlerStatusStack;
 	private Yylex lexer = new Yylex((Reader)null);
 	private Yytoken token = null;
 	private int status = S_INIT;
 	
-	private int peekStatus(LinkedList statusStack){
+	@SuppressWarnings("rawtypes")
+    private int peekStatus(LinkedList statusStack){
 		if(statusStack.size()==0)
 			return -1;
 		Integer status=(Integer)statusStack.getFirst();
@@ -112,6 +112,8 @@ public class JSONParser {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
+    @SuppressLint("UseValueOf")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object parse(Reader in, ContainerFactory containerFactory) throws IOException, ParseException{
 		reset(in);
 		LinkedList statusStack = new LinkedList();
@@ -275,7 +277,8 @@ public class JSONParser {
 			token = new Yytoken(Yytoken.TYPE_EOF, null);
 	}
 	
-	private Map createObjectContainer(ContainerFactory containerFactory){
+	@SuppressWarnings("rawtypes")
+    private Map createObjectContainer(ContainerFactory containerFactory){
 		if(containerFactory == null)
 			return new JSONObject();
 		Map m = containerFactory.createObjectContainer();
@@ -285,7 +288,8 @@ public class JSONParser {
 		return m;
 	}
 	
-	private List createArrayContainer(ContainerFactory containerFactory){
+	@SuppressWarnings("rawtypes")
+    private List createArrayContainer(ContainerFactory containerFactory){
 		if(containerFactory == null)
 			return new JSONArray();
 		List l = containerFactory.creatArrayContainer();
@@ -330,7 +334,9 @@ public class JSONParser {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public void parse(Reader in, ContentHandler contentHandler, boolean isResume) throws IOException, ParseException{
+	@SuppressLint("UseValueOf")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void parse(Reader in, ContentHandler contentHandler, boolean isResume) throws IOException, ParseException{
 		if(!isResume){
 			reset(in);
 			handlerStatusStack = new LinkedList();
