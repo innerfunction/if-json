@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import ns.foundation.NSKeyValueCodingAdditions;
@@ -92,6 +93,102 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return toJSONString();
     }
     
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean add(Object item) {
+        String key = Integer.toString( size() );
+        willChangeValueForKey( key );
+        boolean result = super.add( item );
+        didChangeValueForKey( key );
+        return result;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void add(int idx, Object item) {
+        String key = Integer.toString( idx );
+        willChangeValueForKey( key );
+        super.add( idx, item );
+        didChangeValueForKey( key );
+    }
+
+    @Override
+    public boolean addAll(Collection c) {
+        return addAll( size(), c );
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean addAll(int idx, Collection c) {
+        List<String> keys = new ArrayList<String>();
+        for( int i = 0; i < c.size(); i++ ) {
+            String key = Integer.toString( idx + i );
+            keys.add( key );
+            willChangeValueForKey( key );
+        }
+        boolean result = super.addAll( idx, c );
+        for( String key : keys ) {
+            didChangeValueForKey( key );
+        }
+        return result;
+    }
+    
+    @Override
+    public void clear() {
+        List<String> keys = new ArrayList<String>();
+        for( int i = 0; i < size(); i++ ) {
+            String key = Integer.toString( i );
+            keys.add( key );
+            willChangeValueForKey( key );
+        }
+        super.clear();
+        for( String key : keys ) {
+            didChangeValueForKey( key );
+        }
+    }
+    
+    @Override
+    public Object remove(int idx) {
+        String key = Integer.toString( idx );
+        willChangeValueForKey( key );
+        Object result = remove( idx );
+        didChangeValueForKey( key );
+        return result;
+    }
+    
+    @Override
+    public boolean remove(Object obj) {
+        int idx = 0;
+        for(Object item : this) {
+            if( (item == null && obj == null) || item.equals( obj ) ) {
+                remove( idx );
+                return true;
+            }
+            idx++;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean removeAll(Collection c) {
+        boolean result = false;
+        for(Object obj : c) {
+            result |= remove( obj );
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean retainAll(Collection c) {
+        boolean result = false;
+        for(Object obj : this) {
+            if( !c.contains( obj ) ) {
+                result |= remove( obj );
+            }
+        }
+        return result;
+    }
+    
     @Override
     @SuppressWarnings("unchecked")
     public Object set(int idx, Object value) {
@@ -112,18 +209,22 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         }
     }
     
+    @Override
     public JSONValue.Type getJSONType(String name) {
         return JSONValue.typeOfValue( get( name ) );
     }
     
+    @Override
     public JSONValue.Type resolveJSONType(String path) {
         return JSONValue.typeOfValue( valueForKeyPath( path ) );
     }
     
+    @Override
     public Object resolve(String path) {
         return valueForKeyPath( path );
     }
     
+    @Override
     public Boolean getBoolean(String name) {
         Object value = get( name );
         return value instanceof Boolean ? (Boolean)value : null;
@@ -134,11 +235,13 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return value instanceof Boolean ? (Boolean)value : null;
     }
     
+    @Override
     public Boolean resolveBoolean(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof Boolean ? (Boolean)value : null;
     }
     
+    @Override
     public Number getNumber(String name) {
         Object value = get( name );
         return value instanceof Number ? (Number)value : null;
@@ -149,11 +252,13 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return value instanceof Number ? (Number)value : null;
     }
     
+    @Override
     public Number resolveNumber(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof Number ? (Number)value : null;
     }
     
+    @Override
     public String getString(String name) {
         Object value = get( name );
         return value instanceof String ? (String)value : null;
@@ -164,11 +269,13 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return value instanceof String ? (String)value : null;
     }
     
+    @Override
     public String resolveString(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof String ? (String)value : null;
     }
     
+    @Override
     public JSONArray getJSONArray(String name) {
         Object value = get( name );
         return value instanceof JSONArray ? (JSONArray)value : null;
@@ -179,11 +286,13 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return value instanceof JSONArray ? (JSONArray)value : null;
     }
 
+    @Override
     public JSONArray resolveJSONArray(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof JSONArray ? (JSONArray)value : null;
     }
     
+    @Override
     public JSONObject getJSONObject(String name) {
         Object value = get( name );
         return value instanceof JSONObject ? (JSONObject)value : null;
@@ -194,6 +303,7 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         return value instanceof JSONObject ? (JSONObject)value : null;
     }
 
+    @Override
     public JSONObject resolveJSONObject(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof JSONObject ? (JSONObject)value : null;

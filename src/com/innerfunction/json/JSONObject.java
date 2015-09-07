@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.EnumSet;
+import java.util.Set;
 
 import ns.foundation.NSKeyValueCodingAdditions;
 import ns.foundation.NSKeyValueObserving;
@@ -46,6 +47,18 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
         return toJSONString();
     }
     
+    @Override
+    public void clear() {
+        Set keys = keySet();
+        for( Object key : keys ) {
+            willChangeValueForKey( key.toString() );
+        }
+        super.clear();
+        for( Object key : keys ) {
+            didChangeValueForKey( key.toString() );
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public Object put(Object key, Object value) {
@@ -59,68 +72,106 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
         return result;
     }
     
+    @Override
+    public void putAll(Map values) {
+        for (Object key : values.keySet() ) {
+            put( key, values.get( key ) );
+        }
+    }
+    
+    @Override
+    public Object remove(Object key) {
+        Object result = null;
+        if( key != null ) {
+            String skey = key.toString();
+            willChangeValueForKey( skey );
+            result = super.remove( key );
+            didChangeValueForKey( skey );
+        }
+        return result;
+    }
+    
+    @Override
     public JSONValue.Type getJSONType(String name) {
         return JSONValue.typeOfValue( get( name ) );
     }
     
+    @Override
     public JSONValue.Type resolveJSONType(String path) {
         return JSONValue.typeOfValue( valueForKeyPath( path ) );
     }
     
+    @Override
     public Object resolve(String path) {
         return valueForKeyPath( path );
     }
     
+    @Override
     public Boolean getBoolean(String name) {
         Object value = get( name );
         return value instanceof Boolean ? (Boolean)value : null;
     }
     
+    @Override
     public Boolean resolveBoolean(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof Boolean ? (Boolean)value : null;
     }
     
+    @Override
     public Number getNumber(String name) {
         Object value = get( name );
         return value instanceof Number ? (Number)value : null;
     }
     
+    @Override
     public Number resolveNumber(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof Number ? (Number)value : null;
     }
     
+    @Override
     public String getString(String name) {
         Object value = get( name );
         return value instanceof String ? (String)value : null;
     }
     
+    @Override
     public String resolveString(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof String ? (String)value : null;
     }
     
+    @Override
     public JSONArray getJSONArray(String name) {
         Object value = get( name );
         return value instanceof JSONArray ? (JSONArray)value : null;
     }
     
+    @Override
     public JSONArray resolveJSONArray(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof JSONArray ? (JSONArray)value : null;
     }
     
+    @Override
     public JSONObject getJSONObject(String name) {
         Object value = get( name );
         return value instanceof JSONObject ? (JSONObject)value : null;
     }
     
+    @Override
     public JSONObject resolveJSONObject(String path) {
         Object value = valueForKeyPath( path );
         return value instanceof JSONObject ? (JSONObject)value : null;
     }
 
+    /*
+    @Override
+    public Object removeValueAtPath(String path) {
+    }
+    */
+    
     @Override
     public void takeValueForKeyPath(Object value, String keyPath) {
         NSKeyValueCodingAdditions.DefaultImplementation.takeValueForKeyPath( this, value, keyPath );
