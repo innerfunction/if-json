@@ -1,10 +1,13 @@
 package com.innerfunction.json;
 
+import ns.foundation.NSKeyValueObserving;
+import ns.foundation.NSObservable;
+
 /**
  * Beans that support customized output of JSON text shall implement this interface.  
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
-public interface JSONAware {
+public interface JSONAware extends NSKeyValueObserving, NSObservable {
     
     /**
      * Get the type of a named property.
@@ -25,7 +28,7 @@ public interface JSONAware {
      * @param name A property name.
      * @return The property's value, or null if the property is null.
      */
-//    public Object get(String name);
+    public Object get(String name);
 
     /**
      * Get a named boolean property.
@@ -105,11 +108,24 @@ public interface JSONAware {
     public JSONArray resolveJSONArray(String path);
     
     /**
+     * Set a named property value.
+     * @param name A property name.
+     * @param value The property value.
+     */
+    public void set(String name, Object value);
+    
+    /**
+     * Set a value referenced by a property path.
+     * @param path A dotted path reference.
+     * @param value The property value.
+     */
+    public void setPath(String path, Object value);
+    
+    /**
      * Remove the value referenced by a property path.
      * @param path A dotted path reference.
-     * @return The removed value.
      */
-    //public Object removeValueAtPath(String path);
+    public void removePath(String path);
     
     /**
      * @return JSON text

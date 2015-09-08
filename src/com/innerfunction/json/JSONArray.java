@@ -13,12 +13,11 @@ import java.util.Set;
 
 import ns.foundation.NSKeyValueCodingAdditions;
 import ns.foundation.NSKeyValueObserving;
-import ns.foundation.NSObservable;
 import ns.foundation.NSObserver;
 import ns.foundation.NSSet;
 
 @SuppressWarnings("rawtypes")
-public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, NSKeyValueObserving, NSObservable {
+public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware {
     
     private static final long serialVersionUID = 3957988303675231981L;
     
@@ -190,6 +189,11 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
     }
     
     @Override
+    public void set(String name, Object value) {
+        takeValueForKey( value, name );
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Object set(int idx, Object value) {
         String key = Integer.toString( idx );
@@ -197,6 +201,16 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
         Object result = super.set( idx, value );
         didChangeValueForKey( key );
         return result;
+    }
+    
+    @Override
+    public void setPath(String path, Object value) {
+        takeValueForKeyPath( value, path );
+    }
+    
+    @Override
+    public void removePath(String path) {
+        takeValueForKeyPath( null, path );
     }
     
     public Object get(String name) {

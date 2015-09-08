@@ -11,12 +11,11 @@ import java.util.Set;
 
 import ns.foundation.NSKeyValueCodingAdditions;
 import ns.foundation.NSKeyValueObserving;
-import ns.foundation.NSObservable;
 import ns.foundation.NSObserver;
 import ns.foundation.NSSet;
 
 @SuppressWarnings("rawtypes")
-public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAware, NSKeyValueObserving, NSObservable {
+public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAware {
 
     private static final long serialVersionUID = -503443796854799292L;
     
@@ -57,6 +56,11 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
         for( Object key : keys ) {
             didChangeValueForKey( key.toString() );
         }
+    }
+    
+    @Override
+    public void set(String name, Object value) {
+        put( name, value );
     }
     
     @SuppressWarnings("unchecked")
@@ -104,6 +108,18 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
     @Override
     public Object resolve(String path) {
         return valueForKeyPath( path );
+    }
+    
+    @Override
+    public Object get(Object key) {
+        Object value = super.get( key );
+        // TODO: Insert code here if supporting null value token.
+        return value;
+    }
+    
+    @Override
+    public Object get(String name) {
+        return get( (Object)name );
     }
     
     @Override
@@ -166,11 +182,15 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
         return value instanceof JSONObject ? (JSONObject)value : null;
     }
 
-    /*
     @Override
-    public Object removeValueAtPath(String path) {
+    public void setPath(String path, Object value) {
+        takeValueForKeyPath( value, path );
     }
-    */
+
+    @Override
+    public void removePath(String path) {
+        takeValueForKeyPath( null, path );
+    }
     
     @Override
     public void takeValueForKeyPath(Object value, String keyPath) {
