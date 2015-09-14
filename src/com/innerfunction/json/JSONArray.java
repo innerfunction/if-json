@@ -222,7 +222,10 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, 
     public Object get(String name) {
         try {
             int idx = Integer.parseInt( name );
-            return get( idx );
+            if( idx < size() ) {
+                return get( idx );
+            }
+            return null;
         }
         catch(NumberFormatException e) {
             return null;
