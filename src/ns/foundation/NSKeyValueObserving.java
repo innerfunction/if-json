@@ -197,6 +197,17 @@ public interface NSKeyValueObserving extends NSKeyValueCodingAdditions {
     }    
   }
   
+  /**
+   * Interface allowing objects to return their own proxy cache key.
+   * INFU addition.
+   * The proxy cache scheme doesn't work for objects like Map instances whose hashKey value changes as it
+   * is modified. This interface is added to that such objects can return a proxy cache key which will return
+   * the same hash code as the object itself is mutated.
+   */
+  public static interface KeyValueObservingProxyCacheAware {
+      public Object getNSKVProxyCacheKey();
+  }
+  
   public static class KeyValueObservingProxy implements NSObservable {
     private static final NSMutableDictionary<Object, KeyValueObservingProxy> _proxyCache = new NSMutableDictionary<Object, KeyValueObservingProxy>();
     private static final NSMutableDictionary<Class<? extends Object>, NSMutableDictionary<String, NSMutableSet<String>>> _dependentKeys = new NSMutableDictionary<Class<? extends Object>, NSMutableDictionary<String, NSMutableSet<String>>>();
@@ -206,14 +217,18 @@ public interface NSKeyValueObserving extends NSKeyValueCodingAdditions {
     int _changeCount = 0;
     
     public static KeyValueObservingProxy proxyForObject(Object object) {
-      KeyValueObservingProxy proxy = _proxyCache.objectForKey(object);
+      // INFU addition - see comment above on KeyValueObservingProxyCacheAware
+      Object cacheKey = (object instanceof KeyValueObservingProxyCacheAware)
+              ? ((KeyValueObservingProxyCacheAware)object).getNSKVProxyCacheKey()
+              : object;
+      KeyValueObservingProxy proxy = _proxyCache.objectForKey( cacheKey );
       
       if (proxy != null) {
         return proxy;
       }
       
       proxy = new KeyValueObservingProxy(object);
-      _proxyCache.setObjectForKey(proxy, object);
+      _proxyCache.setObjectForKey(proxy, cacheKey);
       return proxy;
     }
     

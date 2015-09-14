@@ -15,12 +15,18 @@ import ns.foundation.NSObserver;
 import ns.foundation.NSSet;
 
 @SuppressWarnings("rawtypes")
-public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAware {
+public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAware, NSKeyValueObserving.KeyValueObservingProxyCacheAware {
 
     private static final long serialVersionUID = -503443796854799292L;
-    
+
+    private Object nskvProxyCacheKey = new Object();
+
     public JSONObject() {
         super();
+    }
+    
+    public Object getNSKVProxyCacheKey() {
+        return nskvProxyCacheKey;
     }
     
     /**

@@ -17,10 +17,12 @@ import ns.foundation.NSObserver;
 import ns.foundation.NSSet;
 
 @SuppressWarnings("rawtypes")
-public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware {
+public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware, NSKeyValueObserving.KeyValueObservingProxyCacheAware {
     
     private static final long serialVersionUID = 3957988303675231981L;
-    
+
+    private Object nskvProxyCacheKey = new Object();
+
     /**
      * Constructs an empty JSONArray.
      */
@@ -39,6 +41,10 @@ public class JSONArray extends ArrayList implements JSONAware, JSONStreamAware {
         super(c);
     }
     
+    public Object getNSKVProxyCacheKey() {
+        return nskvProxyCacheKey;
+    }
+
     /**
      * Encode a list into JSON text and write it to out. 
      * If this list is also a JSONStreamAware or a JSONAware, JSONStreamAware and JSONAware specific behaviours will be ignored at this top level.
