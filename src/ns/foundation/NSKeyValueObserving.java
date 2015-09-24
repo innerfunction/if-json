@@ -305,10 +305,12 @@ public interface NSKeyValueObserving extends NSKeyValueCodingAdditions {
         forwarder.destroy();
       }
       
-      observers.removeObjectForKey(observer);
-      if (observers.isEmpty()) {
-        _observersForKey.removeObjectForKey(keyPath);
-        NSKeyValueCoding.DefaultImplementation._removeKVOAdditionsForKey(_targetObject, keyPath);
+      if( observers != null ) {
+          observers.removeObjectForKey(observer);
+          if (observers.isEmpty()) {
+            _observersForKey.removeObjectForKey(keyPath);
+            NSKeyValueCoding.DefaultImplementation._removeKVOAdditionsForKey(_targetObject, keyPath);
+          }
       }
       if (_observersForKey.isEmpty())
         _proxyCache.removeObjectForKey(_targetObject);
