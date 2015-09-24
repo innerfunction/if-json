@@ -300,12 +300,11 @@ public interface NSKeyValueObserving extends NSKeyValueCodingAdditions {
     @Override
     public void removeObserverForKeyPath(NSObserver observer, String keyPath) {
       NSMutableDictionary<NSObserver, ObserverInfo> observers = _observersForKey.objectForKey(keyPath);
-      if (keyPath.contains(".")) {
-        KeyValueForwardingObserver forwarder = observers.objectForKey(observer).forwarder;
-        forwarder.destroy();
-      }
-      
       if( observers != null ) {
+          if (keyPath.contains(".")) {
+            KeyValueForwardingObserver forwarder = observers.objectForKey(observer).forwarder;
+            forwarder.destroy();
+          }
           observers.removeObjectForKey(observer);
           if (observers.isEmpty()) {
             _observersForKey.removeObjectForKey(keyPath);
@@ -480,11 +479,11 @@ public interface NSKeyValueObserving extends NSKeyValueCodingAdditions {
       _firstPart = keyPath.substring(0, index);
       _secondPart = keyPath.substring(index+1);
       
-      _targetObject.addObserverForKeyPath(this, keyPath, options, context);
+      _targetObject.addObserverForKeyPath(this, _firstPart, options, context);
       
       _value = (NSObservable) _targetObject.valueForKey(_firstPart);
       if (_value != null) {
-        _value.addObserverForKeyPath(this, keyPath, options, context);
+        _value.addObserverForKeyPath(this, _secondPart, options, context);
       }
     }
 
